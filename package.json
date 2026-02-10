@@ -1,10 +1,15 @@
 {
   "name": "draw.io-export",
-  "version": "0.3.0",
-  "description": "Convert draw.io xml to pdf/png within command line.",
-  "main": "index.js",
+  "version": "1.0.0",
+  "description": "Convert draw.io xml to pdf/png via REST API or command line.",
+  "main": "api.js",
   "bin": {
     "drawio": "./bin/drawio.js"
+  },
+  "scripts": {
+    "start": "node api.js",
+    "dev": "node api.js",
+    "cli": "node index.js"
   },
   "repository": "https://github.com/b1f6c1c4/draw.io-export",
   "keywords": [
@@ -17,6 +22,9 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "lodash": "^4.17.21",
     "pdf-merger-js": "^3.4.0",
     "puppeteer": "^14.1.2",

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="draw.io" modified="2024-01-01T00:00:00.000Z" agent="5.0" version="20.8.0" type="device">
+  <diagram id="sample" name="Sample Diagram">
+    <mxGraphModel dx="400" dy="400" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        
+        <!-- Title Rectangle -->
+        <mxCell id="2" value="System Architecture" style="rounded=0;whiteSpace=wrap;html=1;fontSize=16;fontStyle=1;fillColor=#e1d5e7;strokeColor=#9673a6;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="50" y="20" width="700" height="40" as="geometry"/>
+        </mxCell>
+        
+        <!-- Client Layer -->
+        <mxCell id="3" value="Client" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="100" y="120" width="150" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- API Gateway -->
+        <mxCell id="4" value="API Gateway" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="350" y="120" width="150" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Database -->
+        <mxCell id="5" value="Database" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="600" y="120" width="150" height="80" as="geometry"/>
+        </mxCell>
+        
+        <!-- Service 1 -->
+        <mxCell id="6" value="Service 1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#4d94ff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="100" y="280" width="140" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Service 2 -->
+        <mxCell id="7" value="Service 2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#4d94ff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="360" y="280" width="140" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Service 3 -->
+        <mxCell id="8" value="Service 3" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cce5ff;strokeColor=#4d94ff;strokeWidth=2;" vertex="1" parent="1">
+          <mxGeometry x="620" y="280" width="140" height="60" as="geometry"/>
+        </mxCell>
+        
+        <!-- Arrows -->
+        <mxCell id="9" edge="1" parent="1" source="3" target="4">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="10" edge="1" parent="1" source="4" target="5">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        
+        <mxCell id="11" edge="1" parent="1" source="4" target="6">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="270" y="200" as="sourcePoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="12" edge="1" parent="1" source="4" target="7">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="350" y="200" as="sourcePoint"/>
+          </mxGeometry>
+        </mxCell>
+        
+        <mxCell id="13" edge="1" parent="1" source="4" target="8">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="430" y="200" as="sourcePoint"/>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

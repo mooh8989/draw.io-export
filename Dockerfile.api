@@ -1,0 +1,38 @@
+# Dockerfile for Draw.io Export REST API
+# Supports both CLI and REST API modes
+
+FROM node:lts-alpine3.18
+
+# Install Chromium and required dependencies
+RUN apk add --no-cache chromium coreutils
+
+# Set working directory
+WORKDIR /home/node/draw.io-export
+
+# Set environment variables
+ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+ENV CHROMIUM_PATH=/usr/bin/chromium-browser
+ENV NODE_ENV=production
+
+# Copy package files
+COPY package*.json ./
+
+# Install production dependencies
+RUN npm ci --only=production
+
+# Copy application files
+COPY . .
+
+# Create files volume for CLI mode
+VOLUME ["/files"]
+
+# Expose port for API server
+EXPOSE 3000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:3000/health', (r) => {if (r.statusCode !== 200) throw new Error(r.statusCode)})"
+
+# Default command runs REST API
+# Override with: docker run ... drawio-export npm run cli
+CMD ["npm", "start"]
