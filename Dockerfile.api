@@ -24,7 +24,7 @@ RUN npm ci --only=production
 COPY . .
 
 # Create files volume for CLI mode
-VOLUME ["/files"]
+#VOLUME ["/files"]
 
 # Expose port for API server
 EXPOSE 3000
@@ -36,3 +36,4 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 # Default command runs REST API
 # Override with: docker run ... drawio-export npm run cli
 CMD ["npm", "start"]
+
