@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Draw.io Export API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .panel h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        label {
+            display: block;
+            color: #555;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 300px;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 12px;
+            resize: vertical;
+            transition: border-color 0.3s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            grid-column: 1 / -1;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        .btn-copy {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .btn-copy:hover {
+            background: #c8e6c9;
+        }
+
+        .btn-download {
+            background: #fff3e0;
+            color: #e65100;
+        }
+
+        .btn-download:hover {
+            background: #ffe0b2;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #667eea;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 3px solid rgba(102, 126, 234, 0.2);
+            border-radius: 50%;
+            border-top-color: #667eea;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .result {
+            margin-top: 20px;
+        }
+
+        .result-title {
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .preview {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            overflow: auto;
+            background: #f9f9f9;
+            max-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+        }
+
+        .preview img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .preview-pdf {
+            color: #999;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .error {
+            background: #ffebee;
+            border: 2px solid #ef5350;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .success {
+            background: #e8f5e9;
+            border: 2px solid #66bb6a;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 13px;
+        }
+
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: #1565c0;
+        }
+
+        .info-box code {
+            background: rgba(255, 255, 255, 0.5);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+
+        @media (max-width: 768px) {
+            .main {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .stat {
+            padding: 8px;
+            background: #f5f5f5;
+            border-radius: 6px;
+        }
+
+        .stat-label {
+            color: #999;
+            font-weight: 600;
+        }
+
+        .stat-value {
+            color: #333;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎨 Draw.io Export API</h1>
+            <p class="subtitle">Convert Draw.io XML diagrams to PNG or PDF in real-time</p>
+        </header>
+
+        <div class="main">
+            <!-- Input Panel -->
+            <div class="panel">
+                <h2>Input</h2>
+                
+                <div class="info-box">
+                    💡 Paste your Draw.io XML, configure options, and click Export
+                </div>
+
+                <div class="form-group">
+                    <label>API Key</label>
+                    <input type="text" id="apiKey" placeholder="Enter API key..." value="11223344zzz">
+                </div>
+
+                <div class="form-group">
+                    <label>Draw.io XML Diagram</label>
+                    <textarea id="xmlInput" placeholder='Paste your draw.io XML here... (e.g., <mxfile><diagram>...</diagram></mxfile>'></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Output Format</label>
+                        <select id="format">
+                            <option value="png">PNG Image</option>
+                            <option value="pdf">PDF Document</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Scale</label>
+                        <input type="number" id="scale" min="0.5" max="5" step="0.5" value="1">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Border (px)</label>
+                    <input type="number" id="border" min="0" max="100" step="1" value="0">
+                </div>
+
+                <div class="controls">
+                    <button class="btn-primary" onclick="exportDiagram()">Export Diagram</button>
+                    <button class="btn-secondary" onclick="loadSampleDiagram()">Load Sample</button>
+                </div>
+
+                <div class="loading" id="loading">
+                    <span class="spinner"></span>Exporting...
+                </div>
+            </div>
+
+            <!-- Output Panel -->
+            <div class="panel">
+                <h2>Output</h2>
+
+                <div id="resultContainer" style="display: none;">
+                    <div class="result">
+                        <div class="result-title">Preview</div>
+                        <div class="preview" id="preview"></div>
+                        <div class="stats">
+                            <div class="stat">
+                                <div class="stat-label">Format</div>
+                                <div class="stat-value" id="statFormat">-</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-label">Size</div>
+                                <div class="stat-value" id="statSize">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="result" style="margin-top: 20px;">
+                        <div class="result-title">Base64 Data</div>
+                        <textarea id="base64Output" style="height: 100px; font-size: 10px;" readonly></textarea>
+                        <button class="btn-copy" onclick="copyToClipboard('base64Output')" style="margin-top: 10px; width: 100%;">Copy Base64</button>
+                    </div>
+
+                    <div class="controls" style="margin-top: 20px;">
+                        <button class="btn-download" onclick="downloadDiagram()">⬇️ Download File</button>
+                        <button class="btn-secondary" onclick="clearOutput()">Clear Output</button>
+                    </div>
+                </div>
+
+                <div id="noResult" style="text-align: center; color: #999; padding: 40px 20px;">
+                    📋 Export result will appear here
+                </div>
+
+                <div id="errorContainer" style="display: none;">
+                    <div class="error" id="errorMessage"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let lastExportedBlob = null;
+        let lastFormat = 'png';
+        let lastBase64 = null;
+
+        async function exportDiagram() {
+            const xml = document.getElementById('xmlInput').value.trim();
+            const format = document.getElementById('format').value;
+            const scale = parseFloat(document.getElementById('scale').value);
+            const border = parseInt(document.getElementById('border').value);
+            const apiKey = document.getElementById('apiKey').value.trim();
+
+            if (!xml) {
+                showError('Please paste Draw.io XML content');
+                return;
+            }
+
+            if (!apiKey) {
+                showError('Please enter API key');
+                return;
+            }
+
+            showLoading(true);
+            clearError();
+
+            try {
+                const response = await fetch('/api/export/base64', {
+                    method: 'POST',
+                    headers: {
+                        'X-API-Key': apiKey,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ xml, format, scale, border })
+                });
+
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || `HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+                
+                lastBase64 = result.data;
+                lastFormat = format;
+                lastExportedBlob = base64ToBlob(result.data, result.mimeType);
+
+                displayResult(result);
+                showSuccess(`Successfully exported as ${format.toUpperCase()} (${formatBytes(result.size)})`);
+
+            } catch (error) {
+                showError(`Export failed: ${error.message}`);
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayResult(result) {
+            const preview = document.getElementById('preview');
+            document.getElementById('statFormat').textContent = result.format.toUpperCase();
+            document.getElementById('statSize').textContent = formatBytes(result.size);
+
+            if (result.format === 'png') {
+                preview.innerHTML = `<img src="${result.dataUrl}" alt="Exported diagram" style="max-height: 100%; max-width: 100%;">`;
+            } else {
+                preview.innerHTML = '<div class="preview-pdf">📄 PDF file generated<br><br>Click "Download File" to save</div>';
+            }
+
+            document.getElementById('base64Output').value = result.data.substring(0, 500) + '...';
+            document.getElementById('noResult').style.display = 'none';
+            document.getElementById('resultContainer').style.display = 'block';
+        }
+
+        function downloadDiagram() {
+            if (!lastExportedBlob) {
+                showError('No diagram to download');
+                return;
+            }
+
+            const url = URL.createObjectURL(lastExportedBlob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `diagram.${lastFormat}`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function copyToClipboard(elementId) {
+            const element = document.getElementById(elementId);
+            element.select();
+            document.execCommand('copy');
+            alert('Copied to clipboard!');
+        }
+
+        function base64ToBlob(base64, mimeType) {
+            const bstr = atob(base64);
+            const n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            for (let i = 0; i < n; i++) {
+                u8arr[i] = bstr.charCodeAt(i);
+            }
+            return new Blob([u8arr], { type: mimeType });
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function showLoading(show) {
+            document.getElementById('loading').style.display = show ? 'block' : 'none';
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorContainer').style.display = 'block';
+        }
+
+        function showSuccess(message) {
+            const container = document.getElementById('errorContainer');
+            container.innerHTML = `<div class="success">${message}</div>`;
+            container.style.display = 'block';
+            setTimeout(() => {
+                container.style.display = 'none';
+            }, 5000);
+        }
+
+        function clearError() {
+            document.getElementById('errorContainer').style.display = 'none';
+        }
+
+        function clearOutput() {
+            document.getElementById('resultContainer').style.display = 'none';
+            document.getElementById('noResult').style.display = 'block';
+            lastExportedBlob = null;
+            lastBase64 = null;
+        }
+
+        function loadSampleDiagram() {
+            const sampleXml = `<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2024-01-01T00:00:00.000Z" agent="5.0" version="1.0">
+  <diagram id="sample" name="Sample">
+    <mxGraphModel dx="400" dy="400" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="2" value="Sample Shape" style="rounded=1;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="100" width="400" height="200" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>`;
+            document.getElementById('xmlInput').value = sampleXml;
+            showSuccess('Sample diagram loaded!');
+        }
+
+        // Keyboard shortcut: Ctrl+Enter to export
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                exportDiagram();
+            }
+        });
+    </script>
+</body>
+</html>
